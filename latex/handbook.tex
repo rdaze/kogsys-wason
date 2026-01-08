@@ -1,0 +1,240 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{booktabs}
+
+\usepackage[skip=6pt,indent=0pt]{parskip}
+
+\usepackage{enumitem}
+\setlist{nosep}
+
+\title{Wason Selection Task Experiment: Technical Documentation}
+\author{Cognitive Systems Project}
+\date{January 8, 2026}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% =========================================================
+\section{Experiment Overview}
+
+The experiment implements a single-trial, browser-based version of the Wason Selection Task to study the effect of contextual framing on conditional reasoning.
+
+Participants evaluate a conditional rule of the form \emph{If P, then Q} by selecting which of four cards must be turned over to test the rule.
+
+The logical structure is held constant across conditions; only the semantic context varies.
+
+Three conditions are used:
+\begin{itemize}
+  \item abstract (numbers and colors)
+  \item familiar real-world (age and alcohol)
+  \item unfamiliar structured (rule-based access scenario)
+\end{itemize}
+
+Participants are randomly assigned to exactly one condition.
+
+% =========================================================
+\section{Experimental Design}
+
+\subsection{Design}
+
+Between-subjects, single-factor design with one trial per participant.
+
+\subsection{Independent Variable}
+
+Context type with three levels:
+\begin{itemize}
+  \item abstract
+  \item familiar
+  \item unfamiliar structured
+\end{itemize}
+
+Assignment is uniform random.
+
+\subsection{Dependent Variables}
+
+Recorded per participant:
+\begin{itemize}
+  \item \textbf{Correctness}: exact match between final selection and condition-specific correct set
+  \item \textbf{Time to submission}: task submit time minus task start time (ms)
+  \item \textbf{Selection changes}: number of card toggle actions
+  \item \textbf{First card selected}: identifier of first toggled card
+  \item \textbf{Confidence}: self-report, 0--100
+\end{itemize}
+
+\subsection{Participant Flow}
+
+Introduction $\rightarrow$ task $\rightarrow$ confidence rating $\rightarrow$ debrief.  
+Backward navigation is not permitted.
+
+% =========================================================
+\section{Front-End Architecture}
+
+\subsection{Stack}
+
+Client-side application using:
+\begin{itemize}
+  \item Vite
+  \item React
+  \item TypeScript
+  \item Tailwind CSS
+\end{itemize}
+
+The application is deployed as a static website.
+
+\subsection{State Model}
+
+A single global session state controls the application.  
+A discrete screen variable determines the rendered view:
+\begin{itemize}
+  \item \texttt{start}
+  \item \texttt{task}
+  \item \texttt{grade}
+  \item \texttt{end}
+\end{itemize}
+
+Transitions are strictly forward-only.
+
+\subsection{Component Structure}
+
+\begin{itemize}
+  \item \texttt{App.tsx}: global state and transitions.
+  \item \texttt{screens/}: UI per experimental stage.
+  \item \texttt{tasks.ts}: condition definitions and correct sets.
+  \item \texttt{types.ts}: shared type definitions.
+  \item \texttt{api.ts}, \texttt{supabase.ts}: authentication and persistence.
+\end{itemize}
+
+Screen components are stateless with respect to experimental logic.
+
+% =========================================================
+\section{Task Logic and Measurement}
+
+\subsection{Card Model}
+
+Each task consists of four cards identified as \texttt{c1--c4}.  
+Identifiers are constant; labels vary by condition.
+
+\subsection{Selection Logic}
+
+Card interaction is implemented as a toggle:
+\begin{itemize}
+  \item selecting adds the card to the selection set
+  \item selecting again removes it
+\end{itemize}
+
+All toggles are centrally handled.
+
+\subsection{First Card Selected}
+
+The first toggle event sets \texttt{first\_card\_selected}.  
+This value is immutable after initialization.
+
+\subsection{Selection Changes}
+
+Each toggle increments \texttt{selection\_changes}.  
+This counts exploratory behavior independently of correctness.
+
+\subsection{Final Selection}
+
+The final selection is the unordered set of cards selected at submission.
+
+\subsection{Correctness}
+
+A response is correct iff:
+\begin{itemize}
+  \item all required cards are selected
+  \item no additional cards are selected
+\end{itemize}
+
+Partial or superset selections are scored as incorrect.
+
+\subsection{Timing}
+
+Task duration is measured using \texttt{performance.now()}:
+\[
+\text{time} = \text{task\_submit\_ms} - \text{task\_start\_ms}
+\]
+
+\subsection{Confidence}
+
+Confidence is collected post-task on a 0--100 scale.
+
+% =========================================================
+\section{Back-End and Data Storage}
+
+\subsection{Infrastructure}
+
+Data are stored using Supabase (PostgreSQL).  
+No custom server is used.
+
+\subsection{Authentication}
+
+Participants are authenticated via anonymous Supabase auth.  
+The resulting UUID serves as the participant identifier.
+
+No personally identifying data are collected.
+
+\subsection{Security Model}
+
+Row Level Security enforces:
+\begin{itemize}
+  \item insert-only access
+  \item authenticated users only
+  \item user may insert only their own rows
+  \item no client-side reads, updates, or deletes
+\end{itemize}
+
+The public API key does not grant privileged access.
+
+\subsection{Write Procedure}
+
+Data are written exactly once, after confidence submission.  
+A saving state prevents duplicate inserts.  
+Errors are surfaced to the participant and allow retry.
+
+% =========================================================
+\section{Data Schema}
+
+Each row represents one completed session.
+
+\subsection{Core Fields}
+
+\begin{itemize}
+  \item \texttt{session\_id}: client-generated primary key
+  \item \texttt{experiment\_id}: experiment/version label
+  \item \texttt{user\_id}: anonymous Supabase UUID
+  \item \texttt{condition}: assigned context
+  \item \texttt{task\_start\_ms}, \texttt{task\_submit\_ms}
+  \item \texttt{selection\_changes}
+  \item \texttt{first\_card\_selected}
+  \item \texttt{final\_selection}
+  \item \texttt{correct}
+  \item \texttt{confidence}
+  \item \texttt{created\_at}
+\end{itemize}
+
+\subsection{Derived Measures}
+
+\begin{itemize}
+  \item time to submission
+  \item exploratory intensity
+  \item initial reasoning strategy
+\end{itemize}
+
+\subsection{Data Handling}
+
+The database is immutable from the client.  
+All exclusions or corrections are performed offline.
+
+% =========================================================
+\section{Conclusion}
+
+This document specifies the complete experimental logic, measurement definitions, and data guarantees of the implemented Wason Selection Task system.
+
+\end{document}
