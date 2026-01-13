@@ -26,6 +26,10 @@ export async function writeSessionResult(input: {
   correct: boolean
   confidence: number
 
+  sex: string
+  age: number
+  degree: string
+
   user_agent: string
   screen_w: number
   screen_h: number

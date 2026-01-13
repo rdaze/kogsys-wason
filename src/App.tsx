@@ -5,6 +5,7 @@ import { makeLocalUserId, pickRandomCondition } from "./random"
 import { StartScreen } from "./screens/StartScreen"
 import { TaskScreen } from "./screens/TaskScreen"
 import { GradeScreen } from "./screens/GradeScreen"
+import { DataScreen } from "./screens/DataScreen"
 import { EndScreen } from "./screens/EndScreen"
 
 import { TASKS, type CardId } from "./tasks"
@@ -39,6 +40,10 @@ function makeFreshSession(): SessionState {
     correct: null,
 
     confidence: null,
+
+    sex: null,
+    age: null,
+    degree: null,
 
     isSaving: false,
     saveError: null,
@@ -101,21 +106,32 @@ export default function App() {
   }
 
   async function submitGrade(confidence: number) {
+    setSession((s) => ({
+      ...s,
+      confidence,
+      screen: "data",
+      saveError: null,
+    }))
+  }
+
+  async function submitData(data: { sex: string; age: number; degree: string }) {
     const snapshot = session
 
-    // enter saving state immediately
     setSession((s) => ({
       ...s,
       isSaving: true,
       saveError: null,
-      confidence,
+      sex: data.sex,
+      age: data.age,
+      degree: data.degree,
     }))
 
     try {
       if (
         snapshot.taskStartMs == null ||
         snapshot.taskSubmitMs == null ||
-        snapshot.correct == null
+        snapshot.correct == null ||
+        snapshot.confidence == null
       ) {
         throw new Error("Missing task data; cannot save.")
       }
@@ -134,7 +150,11 @@ export default function App() {
         first_card_selected: snapshot.firstCardSelected,
         final_selection: snapshot.finalSelection,
         correct: snapshot.correct,
-        confidence,
+        confidence: snapshot.confidence,
+
+        sex: data.sex,
+        age: data.age,
+        degree: data.degree,
 
         user_agent: navigator.userAgent,
         screen_w: window.innerWidth,
@@ -142,11 +162,7 @@ export default function App() {
         tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
       })
 
-      setSession((s) => ({
-        ...s,
-        isSaving: false,
-        screen: "end",
-      }))
+      setSession((s) => ({ ...s, isSaving: false, screen: "end" }))
     } catch (err: any) {
       setSession((s) => ({
         ...s,
@@ -155,6 +171,7 @@ export default function App() {
       }))
     }
   }
+
 
   function restart() {
     // new condition each run, but keep local userId stable
@@ -199,6 +216,16 @@ export default function App() {
       />
     )
   }
+
+  if (session.screen === "data") {
+  return (
+    <DataScreen
+      onSubmit={submitData}
+      disabled={session.isSaving}
+      error={session.saveError}
+    />
+  )
+}
 
   return (
     <EndScreen

@@ -1,7 +1,7 @@
 import type { CardId } from "./tasks"
 
 export type Condition = "A" | "B" | "C"
-export type Screen = "start" | "task" | "grade" | "end"
+export type Screen = "start" | "task" | "grade" | "data" | "end"
 
 export interface SessionState {
   userId: string
@@ -21,4 +21,8 @@ export interface SessionState {
 
   isSaving: boolean
   saveError: string | null
+
+  sex: string | null
+  age: number | null
+  degree: string | null
 }

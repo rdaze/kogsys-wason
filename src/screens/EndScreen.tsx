@@ -17,8 +17,15 @@ export function EndScreen({ debug }: Props) {
           </p>
 
           <p>
-            This task is a version of the <span className="italic">
-              Wason Selection Task</span>, a classic experiment used to study how
+            This task is a version of the <a
+              href="https://en.wikipedia.org/wiki/Wason_selection_task"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="italic text-blue-600 hover:underline"
+            >
+              Wason Selection Task
+            </a>
+            , a classic experiment used to study how
             people reason about conditional rules (“if–then” statements).
           </p>
 

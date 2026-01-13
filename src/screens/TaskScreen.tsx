@@ -47,7 +47,8 @@ export function TaskScreen({ task, selected, onToggle, onSubmit, debug }: Props)
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h2 className="text-xl font-semibold text-slate-900">Task</h2>
-              <p className="mt-1 text-slate-600">{task.title}</p>
+              <p className="mt-1 text-slate-600">Please read the task at hand:</p>
+              {/*<p className="mt-1 text-slate-600">{task.title}</p>*/}
             </div>
 
             <button
