@@ -12,6 +12,7 @@ export interface SessionState {
   taskStartMs: number | null
   taskSubmitMs: number | null
 
+  cardOrder: CardId[] // visual order for rendering
   firstCardSelected: CardId | null
   selectionChanges: number
   finalSelection: CardId[]

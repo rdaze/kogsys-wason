@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react"
 import type { SessionState } from "./types"
-import { makeLocalUserId, pickRandomCondition } from "./random"
+import { makeLocalUserId, pickRandomCondition, makeSessionId, shuffle } from "./random"
 
 import { StartScreen } from "./screens/StartScreen"
 import { TaskScreen } from "./screens/TaskScreen"
@@ -13,7 +13,7 @@ import { TASKS, type CardId } from "./tasks"
 import { DebugPanel } from "./components/DebugPanel"
 
 import { ensureAnonAuth, writeSessionResult } from "./api"
-import { makeSessionId } from "./random"
+import { hasCompleted, markCompleted } from "./completion"
 
 const SHOW_DEBUG = false
 
@@ -34,6 +34,7 @@ function makeFreshSession(): SessionState {
     taskStartMs: null,
     taskSubmitMs: null,
 
+    cardOrder: [],
     firstCardSelected: null,
     selectionChanges: 0,
     finalSelection: [],
@@ -59,11 +60,14 @@ export default function App() {
   async function start() {
     await ensureAnonAuth()
 
+    const ids = TASKS[session.condition].cards.map((c) => c.id)
+
     setSession((s) => ({
       ...s,
       screen: "task",
       taskStartMs: performance.now(),
 
+      cardOrder: shuffle(ids),
       firstCardSelected: null,
       selectionChanges: 0,
       finalSelection: [],
@@ -162,6 +166,8 @@ export default function App() {
         tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
       })
 
+      markCompleted()
+
       setSession((s) => ({ ...s, isSaving: false, screen: "end" }))
     } catch (err: any) {
       setSession((s) => ({
@@ -180,12 +186,13 @@ export default function App() {
     setSession({ ...fresh, userId })
   }
 
-  if (session.screen === "start") return <StartScreen onStart={start} />
+  if (session.screen === "start") return <StartScreen onStart={start} alreadyCompleted={hasCompleted()} />
 
   if (session.screen === "task") {
     return (
       <TaskScreen
         task={task}
+        order={session.cardOrder.length ? session.cardOrder : task.cards.map((c) => c.id)}
         selected={session.finalSelection}
         onToggle={toggleCard}
         onSubmit={submitTask}

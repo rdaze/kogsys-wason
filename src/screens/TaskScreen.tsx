@@ -2,6 +2,7 @@ import type { Task, CardId } from "../tasks"
 
 type Props = {
   task: Task
+  order: CardId[]
   selected: CardId[]
   onToggle: (cardId: CardId) => void
   onSubmit: () => void
@@ -39,7 +40,7 @@ function CardButton({
   )
 }
 
-export function TaskScreen({ task, selected, onToggle, onSubmit, debug }: Props) {
+export function TaskScreen({ task, order, selected, onToggle, onSubmit, debug }: Props) {
   return (
     <div className="min-h-screen bg-slate-100 p-4">
       <div className="mx-auto w-full max-w-3xl">
@@ -68,14 +69,17 @@ export function TaskScreen({ task, selected, onToggle, onSubmit, debug }: Props)
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {task.cards.map((c) => (
-              <CardButton
-                key={c.id}
-                label={c.label}
-                selected={selected.includes(c.id)}
-                onClick={() => onToggle(c.id)}
-              />
-            ))}
+            {order.map((id) => {
+              const c = task.cards.find((x) => x.id === id)!
+              return (
+                <CardButton
+                  key={c.id}
+                  label={c.label}
+                  selected={selected.includes(c.id)}
+                  onClick={() => onToggle(c.id)}
+                />
+              )
+            })}
           </div>
 
           <div className="mt-6 text-sm text-slate-600">
