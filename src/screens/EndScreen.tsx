@@ -31,8 +31,8 @@ export function EndScreen({ debug }: Props) {
 
           <p>
             Previous research has shown that performance on this task can vary
-            depending on whether the rule is presented in an abstract form, a
-            familiar real-world context, or an unfamiliar but structured scenario.
+            depending on whether the rule is presented in an abstract form (colors and numbers), a
+            familiar real-world context (age and beer), or an unfamiliar but structured scenario (space-module and badge).
             All versions share the same underlying logical structure.
           </p>
 
