@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react"
 import type { SessionState } from "./types"
-import { makeLocalUserId, pickRandomCondition, makeSessionId, shuffle } from "./random"
+import { makeLocalUserId, pickRandomCondition, shuffle } from "./random"
 
 import { StartScreen } from "./screens/StartScreen"
 import { TaskScreen } from "./screens/TaskScreen"
@@ -118,7 +118,8 @@ export default function App() {
     }))
   }
 
-  async function submitData(data: { sex: string; age: number; degree: string }) {
+  // async function submitData(data: { sex: string; age: number; degree: string }) {
+  async function submitData(data: { age: number; degree: string }) {
     const snapshot = session
 
     setSession((s) => ({
@@ -140,7 +141,7 @@ export default function App() {
         throw new Error("Missing task data; cannot save.")
       }
 
-      const userId = await ensureAnonAuth()
+      // const userId = await ensureAnonAuth()
 
       await writeSessionResult({
         // session_id: snapshot.sessionId,

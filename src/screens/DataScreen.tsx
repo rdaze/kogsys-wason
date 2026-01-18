@@ -1,7 +1,8 @@
 import { useState } from "react"
 
 type Props = {
-  onSubmit: (data: { sex: string; age: number; degree: string }) => void | Promise<void>
+  // onSubmit: (data: { sex: string; age: number; degree: string }) => void | Promise<void>
+  onSubmit: (data: {age: number; degree: string }) => void | Promise<void>
   disabled?: boolean
   error?: string | null
 }
@@ -22,7 +23,7 @@ const DEGREE_OPTIONS = [
 ] as const
 
 export function DataScreen({ onSubmit, disabled, error }: Props) {
-  const [sex, setSex] = useState<string>("Prefer not to say")
+  { /* const [sex, setSex] = useState<string>("Prefer not to say") */ }
   const [age, setAge] = useState<string>("")
   const [degree, setDegree] = useState<string>(DEGREE_OPTIONS[0])
 
@@ -33,7 +34,8 @@ export function DataScreen({ onSubmit, disabled, error }: Props) {
     !disabled &&
     ageValid &&
     degree.trim().length > 0 &&
-    sex.trim().length > 0
+    { /* sex.trim().length > 0 */ }
+    { /* sex, age: ageNum, degree */ }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
@@ -125,7 +127,7 @@ export function DataScreen({ onSubmit, disabled, error }: Props) {
           ].join(" ")}
           type="button"
           disabled={!canSubmit}
-          onClick={() => onSubmit({ sex, age: ageNum, degree })}
+          onClick={() => onSubmit({age: ageNum, degree})}
         >
           {disabled ? "Saving…" : "Submit"}
         </button>
