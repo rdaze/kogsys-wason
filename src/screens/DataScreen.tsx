@@ -48,8 +48,10 @@ export function DataScreen({ onSubmit, disabled, error }: Props) {
           identify you personally.
         </p>
 
+      
         <div className="mt-6 space-y-4">
-          {/* Biological sex */}
+
+        {/* Biological sex
           <div>
             <label className="block text-sm font-medium text-slate-700">
               Biological sex
@@ -68,7 +70,8 @@ export function DataScreen({ onSubmit, disabled, error }: Props) {
               <option>Intersex</option>
               <option>Prefer not to say</option>
             </select>
-          </div>
+          </div> 
+        */}
 
           {/* Age */}
           <div>

@@ -27,7 +27,7 @@ function sameSet(a: CardId[], b: CardId[]) {
 function makeFreshSession(): SessionState {
   return {
     userId: makeLocalUserId(),
-    sessionId: makeSessionId(),
+    // sessionId: makeSessionId(),
     condition: pickRandomCondition(),
     screen: "start",
 
@@ -42,7 +42,7 @@ function makeFreshSession(): SessionState {
 
     confidence: null,
 
-    sex: null,
+    // sex: null,
     age: null,
     degree: null,
 
@@ -125,7 +125,7 @@ export default function App() {
       ...s,
       isSaving: true,
       saveError: null,
-      sex: data.sex,
+      // sex: data.sex,
       age: data.age,
       degree: data.degree,
     }))
@@ -143,9 +143,9 @@ export default function App() {
       const userId = await ensureAnonAuth()
 
       await writeSessionResult({
-        session_id: snapshot.sessionId,
+        // session_id: snapshot.sessionId,
+        // user_id: userId,
         experiment_id: "kogsys_wason_v1",
-        user_id: userId,
         condition: snapshot.condition,
 
         task_start_ms: snapshot.taskStartMs,
@@ -156,7 +156,7 @@ export default function App() {
         correct: snapshot.correct,
         confidence: snapshot.confidence,
 
-        sex: data.sex,
+        // sex: data.sex,
         age: data.age,
         degree: data.degree,
 
@@ -225,14 +225,14 @@ export default function App() {
   }
 
   if (session.screen === "data") {
-  return (
-    <DataScreen
-      onSubmit={submitData}
-      disabled={session.isSaving}
-      error={session.saveError}
-    />
-  )
-}
+    return (
+      <DataScreen
+        onSubmit={submitData}
+        disabled={session.isSaving}
+        error={session.saveError}
+      />
+    )
+  }
 
   return (
     <EndScreen

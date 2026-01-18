@@ -5,7 +5,7 @@ export type Screen = "start" | "task" | "grade" | "data" | "end"
 
 export interface SessionState {
   userId: string
-  sessionId: string
+  // sessionId: string
   condition: Condition
   screen: Screen
 
@@ -23,7 +23,7 @@ export interface SessionState {
   isSaving: boolean
   saveError: string | null
 
-  sex: string | null
+  // sex: string | null
   age: number | null
   degree: string | null
 }

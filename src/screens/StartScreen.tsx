@@ -92,11 +92,7 @@ export function StartScreen({ onStart, alreadyCompleted }: Props) {
                 <li>Card selections (final selection and selection changes)</li>
                 <li>Time to submit your answer</li>
                 <li>Your confidence rating (0–100)</li>
-                <li>Background information (age, biological sex, education)</li>
-                <li>
-                  A randomly generated technical identifier (anonymous) used only to help
-                  prevent multiple submissions from the same device/browser
-                </li>
+                <li>Background information (age and education)</li>
                 <li>Basic device metadata (browser user-agent, screen size, time zone) for quality control</li>
               </ul>
             </div>

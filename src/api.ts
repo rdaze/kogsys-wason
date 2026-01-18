@@ -13,9 +13,9 @@ export async function ensureAnonAuth(): Promise<string> {
 } // signInAnonymously is the official JS method :contentReference[oaicite:5]{index=5}
 
 export async function writeSessionResult(input: {
-  session_id: string
+  // session_id: string
+  // user_id: string
   experiment_id: string
-  user_id: string
   condition: Condition
 
   task_start_ms: number
@@ -26,7 +26,7 @@ export async function writeSessionResult(input: {
   correct: boolean
   confidence: number
 
-  sex: string
+  // sex: string
   age: number
   degree: string
 
