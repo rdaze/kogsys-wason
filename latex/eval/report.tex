@@ -1,0 +1,127 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{booktabs}
+
+\usepackage[skip=6pt,indent=0pt]{parskip}
+
+\usepackage{enumitem}
+\setlist{nosep}
+
+\title{Wason Selection Task Experiment: Evaluation}
+\author{Cognitive Systems Project}
+\date{January 26, 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Statistical Evaluation Plan}
+
+\subsection{Overview of Design}
+The experiment uses a between-subjects, single-factor design with one trial per participant. Participants are randomly assigned to one of three framing conditions:
+\begin{enumerate}
+    \item \textbf{Abstract context (A)}: numbers and colors
+    \item \textbf{Familiar real-world context (B)}: age and alcohol
+    \item \textbf{Unfamiliar structured context (C)}: rule-based access/permission scenario
+\end{enumerate}
+
+The logical structure of the Wason Selection Task (WST) is identical across conditions; only the semantic framing differs. Dependent variables are collected per participant, including correctness, response time, selection behavior, and confidence.
+
+\subsection{Primary Hypothesis}
+The primary hypothesis concerns performance differences across contextual framing conditions:
+\begin{equation}
+    \text{Accuracy}_B > \text{Accuracy}_C > \text{Accuracy}_A
+\end{equation}
+The most important planned comparison is expected to be the difference between the familiar and abstract conditions:
+\begin{equation}
+    \text{Accuracy}_B > \text{Accuracy}_A
+\end{equation}
+Differences between familiar and unfamiliar structured contexts are treated as exploratory, conditional on whether the unfamiliar structured scenario supports permission-based reasoning.
+
+\subsection{Ideal Inferential Tests (Final Analysis)}
+\subsubsection{Correctness (Primary DV)}
+Correctness is binary (correct vs.\ incorrect). The most appropriate final analysis is logistic regression:
+\begin{equation}
+    \text{Correct} \sim \text{Condition}
+\end{equation}
+
+This model yields an omnibus test of whether correctness differs across the three conditions. The primary effect of interest is tested using planned contrasts:
+\begin{itemize}
+    \item \textbf{Primary planned contrast:} Familiar (B) vs.\ Abstract (A)
+    \item \textbf{Secondary contrasts (exploratory):} Familiar (B) vs.\ Unfamiliar structured (C), and Unfamiliar structured (C) vs.\ Abstract (A)
+\end{itemize}
+
+Effect sizes will be reported as odds ratios (OR) with 95\% confidence intervals. In the presence of sparse data or complete separation, penalized methods (e.g., Firth logistic regression) will be explored.
+
+Emergency continuity plan: Fisher’s exact tests (pairwise) when expected counts are small.
+
+\paragraph{Effect Size Reporting for Accuracy.}
+Multiple effect sizes are appropriate:
+\begin{itemize}
+    \item \textbf{Difference in proportions:} $\Delta p = p_1 - p_2$
+    \item \textbf{Odds ratio:} Odds ratios (OR) from logistic regression
+\end{itemize}
+
+\subsubsection{Time to Submission}
+Completion time is continuous and typically right-skewed in browser experiments. The ideal analysis uses either:
+\begin{itemize}
+    \item linear regression / ANOVA on log-transformed time,
+          \begin{equation}
+              \log(\text{Time}) \sim \text{Condition}
+          \end{equation}
+\end{itemize}
+
+\subsubsection{Selection Changes}
+Selection changes are non-negative integer counts. A generalized linear model should be suitable:
+\begin{equation}
+    \text{Changes} \sim \text{Condition}
+\end{equation}
+using a Poisson model.
+
+\subsubsection{First Card Selected}
+The first selected card is categorical. A contingency table analysis (Condition $\times$ FirstCard) is appropriate:
+\begin{itemize}
+    \item chi-square test for independence
+\end{itemize}
+
+\subsubsection{Confidence Ratings}
+Confidence is recorded on a 0--100 scale. The ideal analysis is linear regression / ANOVA:
+\begin{equation}
+    \text{Confidence} \sim \text{Condition}
+\end{equation}
+Because confidence may be strongly related to correctness, an additional model can be informative:
+\begin{equation}
+    \text{Confidence} \sim \text{Condition} + \text{Correct}
+\end{equation}
+
+\newpage
+
+\section{Current Status: Preliminary Results (Pilot Data)}
+
+\subsection{Dataset Summary}
+At the time of this interim analysis, the database contains 12 valid participant sessions distributed as follows:
+\begin{itemize}
+    \item Abstract context (A): $n=4$
+    \item Familiar context (B): $n=6$
+    \item Unfamiliar structured context (C): $n=2$
+\end{itemize}
+Group sizes are notably imbalanced and the unfamiliar structured condition has very low $n$, making inferential statistics unreliable at this stage. Therefore, current results are interpreted descriptively.
+
+\subsection{Accuracy by Condition}
+Observed correctness rates are:
+\begin{itemize}
+    \item Abstract (A): $2/4 = 50\%$
+    \item Familiar (B): $3/6 = 50\%$
+    \item Unfamiliar structured (C): $0/2 = 0\%$
+\end{itemize}
+
+Zuerst Deskriptiv. e.g. Balken diagramm
+Deskriptiv verschaulichen wie viele sind auf Modus Tollens, pollens, yada yada drauf eingefallen
+
+
+\end{document}
+
+

@@ -7,6 +7,11 @@ export function pickRandomCondition(): Condition {
   return "C"
 }
 
+// A & B = 50
+// C = 50
+
+// Dynamisch chance verteilen, damit alle gruppen auf 20 kommen 
+
 // Simple stable-ish id for now (we’ll replace with Firebase anonymous auth later)
 export function makeLocalUserId(): string {
   const key = "kogsys_user_id"

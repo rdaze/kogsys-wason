@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react"
 import type { SessionState } from "./types"
-import { makeLocalUserId, pickRandomCondition, shuffle } from "./random"
+import { makeLocalUserId, shuffle } from "./random"
 
 import { StartScreen } from "./screens/StartScreen"
 import { TaskScreen } from "./screens/TaskScreen"
@@ -15,6 +15,8 @@ import { DebugPanel } from "./components/DebugPanel"
 import { ensureAnonAuth, writeSessionResult } from "./api"
 import { hasCompleted, markCompleted } from "./completion"
 
+import { fetchBalancedCondition } from "./assignCondition"
+
 const SHOW_DEBUG = false
 
 function sameSet(a: CardId[], b: CardId[]) {
@@ -28,7 +30,7 @@ function makeFreshSession(): SessionState {
   return {
     userId: makeLocalUserId(),
     // sessionId: makeSessionId(),
-    condition: pickRandomCondition(),
+    condition: null,
     screen: "start",
 
     taskStartMs: null,
@@ -55,28 +57,37 @@ export default function App() {
   const initial = useMemo(() => makeFreshSession(), [])
   const [session, setSession] = useState<SessionState>(initial)
 
-  const task = TASKS[session.condition]
+  const [isStarting, setIsStarting] = useState(false)
+  const task = session.condition ? TASKS[session.condition] : null
 
   async function start() {
-    await ensureAnonAuth()
+    try {
+      setIsStarting(true)
+      await ensureAnonAuth()
 
-    const ids = TASKS[session.condition].cards.map((c) => c.id)
+      const condition = await fetchBalancedCondition()
+      const ids = TASKS[condition].cards.map((c) => c.id)
 
-    setSession((s) => ({
-      ...s,
-      screen: "task",
-      taskStartMs: performance.now(),
-
-      cardOrder: shuffle(ids),
-      firstCardSelected: null,
-      selectionChanges: 0,
-      finalSelection: [],
-      correct: null,
-      taskSubmitMs: null,
-      confidence: null,
-      isSaving: false,
-      saveError: null,
-    }))
+      setSession((s) => ({
+        ...s,
+        condition,
+        screen: "task",
+        taskStartMs: performance.now(),
+        cardOrder: shuffle(ids),
+        firstCardSelected: null,
+        selectionChanges: 0,
+        finalSelection: [],
+        correct: null,
+        taskSubmitMs: null,
+        confidence: null,
+        isSaving: false,
+        saveError: null,
+      }))
+    } catch (err: any) {
+      setSession((s) => ({ ...s, saveError: err?.message ?? "Start failed." }))
+    } finally {
+      setIsStarting(false)
+    }
   }
 
   function toggleCard(cardId: CardId) {
@@ -97,6 +108,8 @@ export default function App() {
 
   function submitTask() {
     setSession((s) => {
+      if (!s.condition) return s // or throw, but returning is safest
+
       const submitMs = performance.now()
       const correct = sameSet(s.finalSelection, TASKS[s.condition].correct)
 
@@ -143,6 +156,8 @@ export default function App() {
 
       // const userId = await ensureAnonAuth()
 
+      await ensureAnonAuth()
+
       await writeSessionResult({
         // session_id: snapshot.sessionId,
         // user_id: userId,
@@ -187,9 +202,18 @@ export default function App() {
     setSession({ ...fresh, userId })
   }
 
-  if (session.screen === "start") return <StartScreen onStart={start} alreadyCompleted={hasCompleted()} />
+  if (session.screen === "start")
+  return (
+    <StartScreen
+      onStart={start}
+      alreadyCompleted={hasCompleted()}
+      isStarting={isStarting}
+      error={session.saveError}
+    />
+  )
 
   if (session.screen === "task") {
+    if (!task) return null
     return (
       <TaskScreen
         task={task}

@@ -4,9 +4,11 @@ import { Modal } from "../components/Modal"
 type Props = {
   onStart: () => void
   alreadyCompleted: boolean
+  isStarting: boolean
+  error?: string | null
 }
 
-export function StartScreen({ onStart, alreadyCompleted }: Props) {
+export function StartScreen({ onStart, alreadyCompleted, isStarting, error }: Props) {
   const [consent, setConsent] = useState(false)
   const [showDataModal, setShowDataModal] = useState(false)
 
@@ -112,16 +114,22 @@ export function StartScreen({ onStart, alreadyCompleted }: Props) {
         <button
           className={[
             "mt-6 w-full rounded-xl py-3 text-white text-lg font-medium transition",
-            consent && !alreadyCompleted
+            consent && !alreadyCompleted && !isStarting
               ? "bg-blue-600 hover:bg-blue-700 active:bg-blue-800"
               : "bg-slate-400 cursor-not-allowed",
           ].join(" ")}
           type="button"
           onClick={onStart}
-          disabled={!consent || alreadyCompleted}
+          disabled={!consent || alreadyCompleted || isStarting}
         >
-          Start
+          {isStarting ? "Starting…" : "Start"}
         </button>
+
+        {error ? (
+          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            {error}
+          </div>
+        ) : null}
       </div>
     </div>
   )
