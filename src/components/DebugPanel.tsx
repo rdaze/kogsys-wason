@@ -2,7 +2,7 @@ import type { CardId } from "../tasks"
 import type { Condition } from "../types"
 
 type Props = {
-  condition: Condition
+  condition: Condition | null
   firstCardSelected: CardId | null
   selectionChanges: number
   finalSelection: CardId[]

@@ -113,7 +113,7 @@ export default function App() {
       const submitMs = performance.now()
       if (!s.condition) return s
       const correct = sameSet(s.finalSelection, TASKS[s.condition].correct)
-      
+
       return {
         ...s,
         screen: "grade",
@@ -158,6 +158,16 @@ export default function App() {
       // const userId = await ensureAnonAuth()
 
       await ensureAnonAuth()
+
+      if (
+        snapshot.condition == null ||
+        snapshot.taskStartMs == null ||
+        snapshot.taskSubmitMs == null ||
+        snapshot.correct == null ||
+        snapshot.confidence == null
+      ) {
+        throw new Error("Missing task data; cannot save.")
+      }
 
       await writeSessionResult({
         // session_id: snapshot.sessionId,
@@ -204,14 +214,14 @@ export default function App() {
   }
 
   if (session.screen === "start")
-  return (
-    <StartScreen
-      onStart={start}
-      alreadyCompleted={hasCompleted()}
-      isStarting={isStarting}
-      error={session.saveError}
-    />
-  )
+    return (
+      <StartScreen
+        onStart={start}
+        alreadyCompleted={hasCompleted()}
+        isStarting={isStarting}
+        error={session.saveError}
+      />
+    )
 
   if (session.screen === "task") {
     if (!task) return null
