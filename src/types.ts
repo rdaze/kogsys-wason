@@ -6,7 +6,7 @@ export type Screen = "start" | "task" | "grade" | "data" | "end"
 export interface SessionState {
   userId: string
   // sessionId: string
-  condition: Condition
+  condition: Condition | null
   screen: Screen
 
   taskStartMs: number | null

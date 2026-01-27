@@ -111,8 +111,9 @@ export default function App() {
       if (!s.condition) return s // or throw, but returning is safest
 
       const submitMs = performance.now()
+      if (!s.condition) return s
       const correct = sameSet(s.finalSelection, TASKS[s.condition].correct)
-
+      
       return {
         ...s,
         screen: "grade",

@@ -1,5 +1,5 @@
 import { supabase } from "./supabase"
-import type { Condition } from "./tasks"
+import type { Condition } from "./types"
 
 export async function fetchBalancedCondition(): Promise<Condition> {
   // Ensure auth exists (anonymous is fine)
